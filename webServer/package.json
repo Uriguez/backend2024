@@ -1,0 +1,19 @@
+{
+    "name": "webserver",
+    "version": "1.0.0",
+    "description": "Servidor web de demostracion",
+    "main": "app.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/gentooslasta/backend.git"
+    },
+    "keywords": [
+      "webserver",
+      "server"
+    ],
+    "author": "Uriel Castillo Rodriguez",
+    "license": "ISC"
+  }
