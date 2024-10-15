@@ -1,7 +1,24 @@
 GET http://localhost:3000/usuarios
 
 ### 
-GET http://localhost:3000/usuarios/1
+GET http://localhost:3000/usuarios/5
 
 ### 
-GET http://localhost:3000/usuarios/abc
+POST http://localhost:3000/usuarios/ 
+content-type: application/json
+
+{
+"nombre": "Uriel", 
+"apellidos": "Castillo", 
+"email": "urielcastillo7u7@gmail.com"
+}
+
+###
+PUT http://localhost:3000/usuarios/2
+content-type: application/json
+
+{
+  "nombre": "Almir", 
+"apellidos": "Cortes", 
+"email": "almircc03@gmail.com"  
+}
