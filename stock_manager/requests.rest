@@ -1,28 +1,85 @@
 GET http://localhost:3000/users/
+//mostrar todos los usuarios
 
 ###
-GET http://localhost:3000/users/4
+GET http://localhost:3000/users/4/
+//done miestra un usuario dependiendo del id q
 
 ###
 POST http://localhost:3000/users/
 Content-Type: application/json
 
 {
-  "name": "Uriel Castillo" 
+  "username": "Ironman",
+  "password": "Jarvis",
+  "email": "Ironman@avengers"
   //para agregar un usuario
 }
 
-
 ###
-PUT http://localhost:3000/users/4/
+POST http://localhost:3000/users/login
 Content-Type: application/json
 
 {
-  "name": "Uriel Castillo R" 
+  "username": "Ironman",
+  "password": "Jarvis"
+}
+
+###
+PUT http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+  "username": "uriguez" 
   //para actualizar el usuario
 }
 
 
 ###
-DELETE http://localhost:3000/users/4/ 
+DELETE http://localhost:3000/users/3
 //para eliminar
+
+
+
+
+
+### Mostrar todos los miembros de staff
+GET http://localhost:3000/staff
+
+### Mostrar un miembro específico de staff por ID
+GET http://localhost:3000/staff/1
+
+### Agregar un nuevo miembro a staff
+POST http://localhost:3000/staff
+Content-Type: application/json
+
+{
+  "first_name": "Alberto",
+  "last_name": "Villalobos",
+  "birth_date": "2003-04-04",
+  "gender": "M",
+  "phone_number": "2871005665",
+  "email": "alberto123@gmail.com",
+  "address": "Pedregal, Tuxtepec",
+  "is_active": true,
+  "user_id": 1
+}
+
+### Actualizar un miembro específico de staff
+PUT http://localhost:3000/staff/1
+Content-Type: application/json
+
+{
+  "first_name": "Alberto",
+  "last_name": "Villalobos",
+  "birth_date": "2003-04-04",
+  "gender": "M",
+  "phone_number": "2871657090",
+  "email": "alberto720@hotmail.com",
+  "address": "La piragua, Tuxtepec",
+  "is_active": true,
+  "user_id": 1
+}
+
+### Eliminar un miembro específico de staff por ID
+DELETE http://localhost:3000/staff/4
