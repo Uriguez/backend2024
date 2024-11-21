@@ -4,12 +4,6 @@ const pool = require('../db/connection');
 const {usersQueries} = require('../models/users');
 
 const saltRounds = 10;
-//const users = [ //crear arreglo
-  //{ id: 1, name: 'Jeni GR' }, //los registro que se va a almacenar
-  //{ id: 2, name: 'Jen GR' },
-  //{ id: 3, name: 'Lalis ig' },
-//];
-
 
 // paraObtener todos los usuarios
 const getAllUsers = async (req = request, res = response) => {
@@ -132,38 +126,61 @@ const loginUser = async(req = request, res = response) =>{
 }
 
 
-// Actualizar un usuario existente
+// Actualizar un usuario existente con encriptación de contraseña si se proporciona
 const updateUser = async (req = request, res = response) => {
-  const {id } = req.params;
-  const {username} = req.body;
-  if (isNaN(id) || !username) {
-    res.status(400).send('Invalid request');
+  const { id } = req.params; // ID del usuario
+  const { username, password, email } = req.body; // Datos del usuario a actualizar
+
+  // Validar entradas
+  if (isNaN(id) || (!username && !password && !email)) {
+    res.status(400).send('Invalid request. Provide valid fields to update.');
     return;
   }
 
-  let conn;  
-  try{
+  let conn;
+  try {
     conn = await pool.getConnection();
 
-  const user = await conn.query(usersQueries.getById,[+id]);
-  if (user.length === 0) {
-    res.status(404).send('User not found');
-    return;
-  }
+    // Verificar si el usuario existe
+    const user = await conn.query(usersQueries.getById, [+id]);
+    if (user.length === 0) {
+      res.status(404).send('User not found');
+      return;
+    }
 
-  const result = await conn.query(usersQueries.update,[username,+id]);
-  if (result.affectedRows === 0) {
-    res.status(500).send('not be updaed');
-    return;
-  }
+    // Generar los campos actualizados dinámicamente
+    const updatedFields = {
+      username: username || user[0].username,
+      email: email || user[0].email,
+      password: user[0].password, // Mantener la contraseña actual si no se proporciona una nueva
+    };
 
-  res.send('User updated');
-}catch(error){
-  res.status(500).send(error);
-}finally{
-  if (conn) conn.end();
-}
+    // Encriptar la contraseña si se proporciona
+    if (password) {
+      updatedFields.password = await bcrypt.hash(password, saltRounds);
+    }
+
+    // Actualizar el usuario en la base de datos
+    const result = await conn.query(usersQueries.update, [
+      updatedFields.username,
+      updatedFields.password,
+      updatedFields.email,
+      +id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      res.status(500).send('User could not be updated');
+      return;
+    }
+
+    res.send('User updated successfully');
+  } catch (error) {
+    res.status(500).send(error);
+  } finally {
+    if (conn) conn.end();
+  }
 };
+
 
 // Eliminar un usuario
 const deleteUser = async (req = request, res = response) => {

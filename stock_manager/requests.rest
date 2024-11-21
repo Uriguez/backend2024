@@ -30,7 +30,9 @@ PUT http://localhost:3000/users/1
 Content-Type: application/json
 
 {
-  "username": "uriguez" 
+  "username": "uriguez", 
+    "password": "Gokussj123" 
+
   //para actualizar el usuario
 }
 
