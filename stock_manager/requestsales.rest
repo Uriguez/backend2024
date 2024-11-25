@@ -1,0 +1,37 @@
+### Obtener todas las ventas (GET)
+GET http://localhost:3000/sales
+
+### Obtener una venta por ID (GET)
+GET http://localhost:3000/sales/8
+
+### Crear una nueva venta (POST)
+POST http://localhost:3000/sales
+Content-Type: application/json
+
+{
+  "client_rfc": "21350279",
+    "product_id": 1,
+    "quantity": 5,
+    "sale_date": "2024-11-24T16:00:00",
+    "payment_method": "cash",
+    "ticket": "TICKET1",
+    "invoice": "FAC1"
+}
+
+
+### Actualizar una venta existente 
+PUT http://localhost:3000/sales/11
+Content-Type: application/json
+
+{
+    "client_id": "21350249",
+    "product_id": 2,
+    "quantity": 3,
+    "sale_date": "2024-11-24T17:35:00",
+    "payment_method": "cash",
+    "ticket": "TICKET2",
+    "invoice": "FAC2"
+}
+
+### Eliminar una venta (DELETE)
+DELETE http://localhost:3000/sales/13

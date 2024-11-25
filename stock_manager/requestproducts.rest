@@ -1,0 +1,38 @@
+### Obtener todos los productos 
+GET http://localhost:3000/products
+Content-Type: application/json
+
+### Productos en existencias
+GET http://localhost:3000/products/with-stock
+Content-Type: application/json
+
+### Obtener un producto por ID
+GET http://localhost:3000/products/5 
+Content-Type: application/json
+
+### Agregar un nuevo producto
+POST http://localhost:3000/products 
+Content-Type: application/json
+
+{
+  "product": "Playera Polo",
+  "description": "Playera marca polo de algodon, color negro",
+  "stock": 30,
+  "price": 250,
+}
+
+### Actualizar un producto 
+PUT http://localhost:3000/products/1 
+Content-Type: application/json
+
+{
+  "product": "Playera Polo",
+  "description": "Playera marca polo de algodon, color azul marino.",
+  "stock": 35,
+  "price": 255,
+
+}
+
+### Eliminar un producto 
+DELETE http://localhost:3000/products/1
+Content-Type: application/json

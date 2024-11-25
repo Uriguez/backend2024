@@ -1,0 +1,47 @@
+### Obtener todos los clientes
+GET http://localhost:3000/clients
+Content-Type: application/json
+
+###
+
+### Obtener un cliente por ID
+GET http://localhost:3000/clients/21350239
+
+###
+
+### Agregar un nuevo cliente
+POST http://localhost:3000/clients
+Content-Type: application/json
+
+{
+  "ID": "21350239",
+  "first_name": "Uriel",
+  "last_name": "Castillo",
+  "birth_date": "2003-04-04",
+  "gender": "Masculino",
+  "phone_number": "2871541652",
+  "email": "uriel@equipo7.com",
+  "address": "Colonia El Progreso, Tuxtepec, Oaxaca"
+}
+
+###
+
+### Actualizar un cliente existente
+PUT http://localhost:3000/clients/21350249
+Content-Type: application/json
+
+{
+  "first_name": "Jesus",
+  "last_name": "Garcia",
+  "birth_date": "2002-12-17",
+  "gender": "Masculino",
+  "phone_number": "2871005665",
+  "email": "jesus@equipo7.com",
+  "address": "Colonia La Piragua, Tuxtepec, Oaxaca"
+}
+
+
+### Eliminar un cliente
+DELETE http://localhost:3000/clients/A12345
+
+

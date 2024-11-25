@@ -24,8 +24,9 @@ try{
 
 // para Obtener un usuario por ID
 const getUserById = async (req = request, res = response) => {
-  const { id } = req.params; ;//se acceda en el solicitud atreves de req
-  //se tiene que validar un numero por id
+  const { id } = req.params; ;
+  //se acceda en el solicitud atreves de req
+  //Validar un numero por id
 
   if (isNaN(id)) {
     res.status(400).send('Invalid ID');
@@ -49,13 +50,11 @@ const getUserById = async (req = request, res = response) => {
     if(conn) conn.end();
   }
 
-  //hacer un arrgelo donde pasa un fincion deonde debe terner TRUBUTO Y QUE REPRESENTA EL ARRGELO
- // const user = users.find((user) => user.id === +id);
-  //si el variable de usuario termine el valor si a ningino se debe avisar al users
+  
   
 };
 
-// paraAgregar un nuevo usuario
+// Agregar un nuevo usuario
 const addUser = async (req = request, res = response) => {
   const { username, password, email } = req.body;
 
