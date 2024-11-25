@@ -3,11 +3,11 @@ const { getAllProducts, getProductById, addProduct, updateProduct, deleteProduct
 
 const router = Router();
 
-router.get('/', getAllProducts); // Obtener todos los productos
-router.get('/with-stock', getProductsWithStock); // Obtener productos con stock > 0
-router.get('/:id', getProductById); // Obtener un producto por ID
-router.post('/', addProduct); // Agregar un nuevo producto
-router.put('/:id', updateProduct); // Actualizar un producto existente
-router.delete('/:id', deleteProduct); // Eliminar (desactivar) un producto
+router.get('/', getAllProducts); //Mostrar todos los productos
+router.get('/with-stock', getProductsWithStock); //Mostrar productos con stock > 0
+router.get('/:id', getProductById); //Mostrar un producto por ID
+router.post('/', addProduct); //Agrega un nuevo producto
+router.put('/:id', updateProduct); // Actualiza un producto existente
+router.delete('/:id', deleteProduct); //Vacia el stock del producto
 
 module.exports = router;

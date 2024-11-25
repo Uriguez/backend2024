@@ -1,12 +1,9 @@
-### Obtener todos los clientes
+### Mostrar todos los clientes
 GET http://localhost:3000/clients
 Content-Type: application/json
 
-
-### Obtener un cliente por RFC
+### Mostrar un cliente por RFC
 GET http://localhost:3000/clients/21350249
-
-###
 
 ### Agregar un nuevo cliente
 POST http://localhost:3000/clients
@@ -23,8 +20,6 @@ Content-Type: application/json
   "address": "Colonia el progreso, Tuxtepec, Oaxaca"
 }
 
-###
-
 ### Actualizar un cliente existente
 PUT http://localhost:3000/clients/21350249
 Content-Type: application/json
@@ -38,7 +33,6 @@ Content-Type: application/json
   "email": "uriel@equipo7.com",
   "address": "Colonia el progreso, Tuxtepec, Oaxaca"
 }
-
 
 ### Eliminar un cliente
 DELETE http://localhost:3000/clients/21350249

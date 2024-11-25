@@ -12,7 +12,7 @@ const getAllClients = async (req = request, res = response) => {
     conn = await pool.getConnection();
     const clients = await conn.query(clientsQueries.getAll);
     
-    // Filtrar solo los clientes activos
+    //Mostrar solo los clientes activos
     const activeClients = clients.filter(client => client.is_active === 1);
     res.send(activeClients);
 
@@ -24,7 +24,7 @@ const getAllClients = async (req = request, res = response) => {
   }
 };
 
-// Para obtener un cliente por RFC
+//Para obtener un cliente por RFC
 const getClientByRfc = async (req = request, res = response) => {
   const { rfc } = req.params;
 
@@ -51,7 +51,7 @@ const getClientByRfc = async (req = request, res = response) => {
   }
 };
 
-// Para agregar un nuevo cliente
+//Para agregar al nuevo cliente
 const addClient = async (req = request, res = response) => {
   const { rfc, first_name, last_name, birth_date, gender, phone_number, email, address } = req.body;
 
@@ -64,7 +64,7 @@ const addClient = async (req = request, res = response) => {
   try {
     conn = await pool.getConnection();
     
-    // Validar que no exista un cliente con el mismo RFC o email
+    //Validar que no exista un cliente con el mismo RFC o email
     const existingClient = await conn.query(clientsQueries.getByRfcOrEmail, [rfc, email]);
 
     if (existingClient.length > 0) {
@@ -72,7 +72,7 @@ const addClient = async (req = request, res = response) => {
       return;
     }
 
-    // Insertar el nuevo cliente
+    //Agregar el nuevo cliente
     const newClient = await conn.query(clientsQueries.create, [rfc, first_name, last_name, birth_date, gender, phone_number, email, address]);
     
     if (newClient.affectedRows === 0) {
@@ -89,7 +89,7 @@ const addClient = async (req = request, res = response) => {
   }
 };
 
-// Para actualizar un cliente
+//Para actualizar un cliente
 const updateClient = async (req = request, res = response) => {
   const { rfc } = req.params; 
   const { first_name, last_name, birth_date, gender, phone_number, email, address } = req.body; 
@@ -103,21 +103,21 @@ const updateClient = async (req = request, res = response) => {
   try {
     conn = await pool.getConnection();
 
-    // Verificar si el cliente existe y está activo
+    //Verificar si el cliente ya existe y está activo
     const client = await conn.query(clientsQueries.getByRfc, [rfc]);
     if (client.length === 0 || client[0].is_active === 0) {
       res.status(404).send('Client not found or inactive');
       return;
     }
 
-    // Validar que no se repita el RFC o email
+    //Validar que no se repita el RFC o email
     const existingClient = await conn.query(clientsQueries.getByRfcOrEmail, [rfc, email]);
     if (existingClient.length > 0 && existingClient[0].rfc !== rfc) {
       res.status(409).send('Client with this RFC or email already exists');
       return;
     }
 
-    // Actualizar los datos del cliente
+    //Actualizar los datos del cliente
     const updatedClient = await conn.query(clientsQueries.update, [
       first_name || client[0].first_name,
       last_name || client[0].last_name,
@@ -142,7 +142,7 @@ const updateClient = async (req = request, res = response) => {
   }
 };
 
-// Para eliminar un cliente (marcar como inactivo)
+// Para desactivar un cliente 
 const deleteClient = async (req = request, res = response) => {
   const { rfc } = req.params;
 
@@ -155,14 +155,14 @@ const deleteClient = async (req = request, res = response) => {
   try {
     conn = await pool.getConnection();
 
-    // Verificar si el cliente existe y está activo
+    //Verificar si el cliente ya existe y está activo
     const client = await conn.query(clientsQueries.getByRfc, [rfc]);
     if (client.length === 0 || client[0].is_active === 0) {
       res.status(404).send('Client not found or already inactive');
       return;
     }
 
-    // Marcar al cliente como inactivo
+    //Marcar al cliente como inactivo
     const deletedClient = await conn.query(clientsQueries.delete, [rfc]);
     if (deletedClient.affectedRows === 0) {
       res.status(500).send('Client could not be deleted');

@@ -4,7 +4,7 @@ const { productsQueries } = require('../models/products');
 
 const validMeasurementUnits = ['piece', 'meters', 'liters', 'square meters', 'cubic meters'];
 
-// Obtener todos los productos
+// Obtener todos los productos que existen
 const getAllProducts = async (req = request, res = response) => {
   let conn;
   try {
@@ -18,7 +18,7 @@ const getAllProducts = async (req = request, res = response) => {
   }
 };
 
-// Obtener productos con existencias
+//Obtener productos con existencias
 const getProductsWithStock = async (req = request, res = response) => {
   let conn;
   try {
@@ -32,7 +32,7 @@ const getProductsWithStock = async (req = request, res = response) => {
   }
 };
 
-// Obtener un producto por ID
+//Obtener un producto por su ID
 const getProductById = async (req = request, res = response) => {
   const { id } = req.params;
   if (isNaN(id)) {
@@ -43,7 +43,7 @@ const getProductById = async (req = request, res = response) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const product = await conn.query(productsQueries.getById, [+id]); // Obtener producto por ID
+    const product = await conn.query(productsQueries.getById, [+id]); 
     if (product.length === 0) {
       res.status(404).send('Product not found');
       return;
@@ -56,7 +56,7 @@ const getProductById = async (req = request, res = response) => {
   }
 };
 
-// Agregar un nuevo producto
+//Agregar un nuevo producto
 const addProduct = async (req = request, res = response) => {
   const { product, description, stock, measurement_unit, price, discount } = req.body;
 
@@ -65,7 +65,7 @@ const addProduct = async (req = request, res = response) => {
     return;
   }
 
-  // Validar la unidad de medida
+  //Validar la unidad de medida que se introdujo
   if (!validMeasurementUnits.includes(measurement_unit)) {
     res.status(400).send('Invalid measurement unit');
     return;
@@ -87,7 +87,7 @@ const addProduct = async (req = request, res = response) => {
   }
 };
 
-// Actualizar un producto existente
+//Actualizar un producto que ya existe
 const updateProduct = async (req = request, res = response) => {
   const { id } = req.params;
   const { product, description, stock, measurement_unit, price, discount } = req.body;
@@ -97,7 +97,7 @@ const updateProduct = async (req = request, res = response) => {
     return;
   }
 
-  // Validar la unidad de medida
+  // Validar la unidad de medida que se introdujo
   if (!validMeasurementUnits.includes(measurement_unit)) {
     res.status(400).send('Invalid measurement unit');
     return;
@@ -119,7 +119,7 @@ const updateProduct = async (req = request, res = response) => {
   }
 };
 
-// Eliminar un producto
+//Vaciar la existencia de un producto
 const deleteProduct = async (req = request, res = response) => {
   const { id } = req.params;
   if (isNaN(id)) {
