@@ -21,7 +21,7 @@ router.post('/', addClient);
 // Ruta para actualizar un cliente existente
 router.put('/:rfc', updateClient);
 
-// Ruta para eliminar (marcar como inactivo) un cliente
+// Ruta para eliminar un cliente
 router.delete('/:rfc', deleteClient);
 
 module.exports = router;

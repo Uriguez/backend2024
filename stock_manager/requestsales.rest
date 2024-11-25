@@ -1,10 +1,10 @@
-### Obtener todas las ventas (GET)
+### Obtener todas las ventas 
 GET http://localhost:3000/sales
 
-### Obtener una venta por ID (GET)
+### Obtener una venta por ID 
 GET http://localhost:3000/sales/1
 
-### Crear una nueva venta (POST)
+### Crear una nueva venta 
 POST http://localhost:3000/sales
 Content-Type: application/json
 

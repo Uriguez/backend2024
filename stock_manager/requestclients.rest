@@ -2,10 +2,9 @@
 GET http://localhost:3000/clients
 Content-Type: application/json
 
-###
 
 ### Obtener un cliente por RFC
-GET http://localhost:3000/clients/21350239
+GET http://localhost:3000/clients/21350249
 
 ###
 
@@ -14,7 +13,7 @@ POST http://localhost:3000/clients
 Content-Type: application/json
 
 {
-  "rfc": "21350239",
+  "rfc": "21350249",
   "first_name": "Uriel",
   "last_name": "Castillo",
   "birth_date": "2003-04-04",
@@ -27,21 +26,21 @@ Content-Type: application/json
 ###
 
 ### Actualizar un cliente existente
-PUT http://localhost:3000/clients/21350239
+PUT http://localhost:3000/clients/21350249
 Content-Type: application/json
 
 {
-  "first_name": "Jesus",
-  "last_name": "Garcia",
-  "birth_date": "2003-12-17",
+  "first_name": "Uriel",
+  "last_name": "Castillo",
+  "birth_date": "2003-04-04",
   "gender": "M",
-  "phone_number": "2871005665",
-  "email": "jesus@equipo7.com",
-  "address": "Colonia la piragua, Tuxtepec, Oaxaca"
+  "phone_number": "2871541652",
+  "email": "uriel@equipo7.com",
+  "address": "Colonia el progreso, Tuxtepec, Oaxaca"
 }
 
 
 ### Eliminar un cliente
-DELETE http://localhost:3000/clients/21350239
+DELETE http://localhost:3000/clients/21350249
 
 
