@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const {
   getAllClients,
-  getClientID,
+  getClientByRfc,
   addClient,
   updateClient,
   deleteClient
@@ -12,8 +12,8 @@ const router = Router();
 // Ruta para obtener todos los clientes activos
 router.get('/', getAllClients);
 
-// Ruta para obtener un cliente por ID
-router.get('/:rfc', getClientID);
+// Ruta para obtener un cliente por RFC
+router.get('/:rfc', getClientByRfc);
 
 // Ruta para agregar un nuevo cliente
 router.post('/', addClient);
@@ -21,7 +21,7 @@ router.post('/', addClient);
 // Ruta para actualizar un cliente existente
 router.put('/:rfc', updateClient);
 
-// Ruta para eliminar un cliente
+// Ruta para eliminar (marcar como inactivo) un cliente
 router.delete('/:rfc', deleteClient);
 
 module.exports = router;

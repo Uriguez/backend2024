@@ -39,11 +39,11 @@ const getSaleById = async (req = request, res = response) => {
     }
 };
 
-//Nueva venta
+// Agregar una nueva venta
 const addSale = async (req = request, res = response) => {
-    const { client_id, product_id, quantity, sale_date, payment_method, ticket, invoice } = req.body;
+    const { client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice } = req.body;
 
-    if (!client_id || !product_id || !quantity || !sale_date || !payment_method || !ticket || !invoice) {
+    if (!client_rfc || !product_id || !quantity || !sale_date || !payment_method || !ticket || !invoice) {
         res.status(400).send('All fields are required');
         return;
     }
@@ -52,8 +52,8 @@ const addSale = async (req = request, res = response) => {
     try {
         conn = await pool.getConnection();
 
-        //Verificar que client_id y product_id existen
-        const clientExists = await conn.query('SELECT * FROM clients WHERE rfc = ?', [client_id]);
+        // Verificar que `client_rfc` y `product_id` existen en las tablas correspondientes
+        const clientExists = await conn.query('SELECT * FROM clients WHERE rfc = ?', [client_rfc]);
         if (clientExists.length === 0) {
             res.status(400).send('Client RFC does not exist');
             return;
@@ -65,7 +65,7 @@ const addSale = async (req = request, res = response) => {
             return;
         }
 
-        //Verificar que el ticket o la factura no se repita
+        // Verificar que el ticket o invoice no se repita
         const ticketExists = await conn.query('SELECT * FROM sales WHERE ticket = ?', [ticket]);
         if (ticketExists.length > 0) {
             res.status(400).send('Ticket already exists');
@@ -78,7 +78,7 @@ const addSale = async (req = request, res = response) => {
             return;
         }
 
-        // Verificar si hay en existencia
+        // Verificar si hay suficiente stock
         const productStock = await conn.query('SELECT stock FROM products WHERE id = ?', [product_id]);
         if (productStock[0].stock < quantity) {
             res.status(400).send('Insufficient stock');
@@ -86,7 +86,7 @@ const addSale = async (req = request, res = response) => {
         }
 
         // Insertar la venta
-        const result = await conn.query('INSERT INTO sales (client_id, product_id, quantity, sale_date, payment_method, ticket, invoice) VALUES (?, ?, ?, ?, ?, ?, ?)', [client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice]);
+        const result = await conn.query('INSERT INTO sales (client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice) VALUES (?, ?, ?, ?, ?, ?, ?)', [client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice]);
 
         // Descontar el stock del producto
         await conn.query('UPDATE products SET stock = stock - ? WHERE id = ?', [quantity, product_id]);
@@ -102,9 +102,9 @@ const addSale = async (req = request, res = response) => {
 // Actualizar una venta
 const updateSale = async (req = request, res = response) => {
     const { id } = req.params;
-    const { client_id, product_id, quantity, sale_date, payment_method, ticket, invoice } = req.body;
+    const { client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice } = req.body;
 
-    if (isNaN(id) || !client_id || !product_id || !quantity || !sale_date || !payment_method || !ticket || !invoice) {
+    if (isNaN(id) || !client_rfc || !product_id || !quantity || !sale_date || !payment_method || !ticket || !invoice) {
         res.status(400).send('All fields are required');
         return;
     }
@@ -120,8 +120,8 @@ const updateSale = async (req = request, res = response) => {
             return;
         }
 
-        // Verificar que client_id` y product_id existen 
-        const clientExists = await conn.query('SELECT * FROM clients WHERE rfc = ?', [client_id]);
+        // Verificar que `client_rfc` y `product_id` existen en las tablas correspondientes
+        const clientExists = await conn.query('SELECT * FROM clients WHERE rfc = ?', [client_rfc]);
         if (clientExists.length === 0) {
             res.status(400).send('Client RFC does not exist');
             return;
@@ -133,7 +133,7 @@ const updateSale = async (req = request, res = response) => {
             return;
         }
 
-        // Verificar que el ticket o la factura no se repita
+        // Verificar que el ticket o invoice no se repita
         const ticketExists = await conn.query('SELECT * FROM sales WHERE ticket = ? AND id != ?', [ticket, id]);
         if (ticketExists.length > 0) {
             res.status(400).send('Ticket already exists');
@@ -146,13 +146,15 @@ const updateSale = async (req = request, res = response) => {
             return;
         }
 
-        //Actualizar la venta
+        // Actualizar la venta
         const result = await conn.query('UPDATE sales SET client_rfc = ?, product_id = ?, quantity = ?, sale_date = ?, payment_method = ?, ticket = ?, invoice = ? WHERE id = ?', [client_rfc, product_id, quantity, sale_date, payment_method, ticket, invoice, id]);
 
-        //Verificar si hubo cambio en la cantidad y actualizar el stock
+        // Verificar si hubo cambio en la cantidad y actualizar el stock
         if (result.affectedRows > 0) {
+            // Descontar el nuevo stock y devolver el antiguo
             const oldSale = saleExists[0];
             if (oldSale.quantity !== quantity) {
+                // Si se cambió la cantidad, se actualiza el stock
                 await conn.query('UPDATE products SET stock = stock + ? - ? WHERE id = ?', [oldSale.quantity, quantity, product_id]);
             }
         }
@@ -180,7 +182,7 @@ const deleteSale = async (req = request, res = response) => {
         // Verificar si la venta existe
         const saleExists = await conn.query('SELECT * FROM sales WHERE id = ?', [id]);
         if (saleExists.length === 0) {
-            res.status(404).send('Venta no encontrada');
+            res.status(404).send('sale not found');
             return;
         }
 
@@ -192,16 +194,18 @@ const deleteSale = async (req = request, res = response) => {
         // Eliminar la venta
         const result = await conn.query('DELETE FROM sales WHERE id = ?', [id]);
         if (result.affectedRows === 0) {
-            res.status(500).send('No se pudo eliminar la venta');
+            res.status(500).send('Sale could not be eliminated');
             return;
         }
 
-        res.send('Venta borrada exitosamente');
+        // Eliminado
+        res.send('Sale successfully deleted');
     } catch (error) {
         res.status(500).send(error);
     } finally {
         if (conn) conn.end();
     }
 };
+
 
 module.exports = { getAllSales, getSaleById, addSale, updateSale, deleteSale };

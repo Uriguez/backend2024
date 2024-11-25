@@ -5,14 +5,14 @@ const { clientsQueries } = require('../models/clients');
 
 const saltRounds = 10;
 
-//Todos los clientes registrados
+// Para obtener todos los clientes
 const getAllClients = async (req = request, res = response) => {
   let conn;
   try {
     conn = await pool.getConnection();
     const clients = await conn.query(clientsQueries.getAll);
     
-    //Clientes Frecuentes
+    // Filtrar solo los clientes activos
     const activeClients = clients.filter(client => client.is_active === 1);
     res.send(activeClients);
 
@@ -24,19 +24,19 @@ const getAllClients = async (req = request, res = response) => {
   }
 };
 
-// Registrar cliente por su ID
-const getClientID = async (req = request, res = response) => {
-  const { ID } = req.params;
+// Para obtener un cliente por RFC
+const getClientByRfc = async (req = request, res = response) => {
+  const { rfc } = req.params;
 
-  if (!ID) {
-    res.status(400).send('ID is required');
+  if (!rfc) {
+    res.status(400).send('RFC is required');
     return;
   }
 
   let conn;
   try {
     conn = await pool.getConnection();
-    const client = await conn.query(clientsQueries.getID, [rfc]);
+    const client = await conn.query(clientsQueries.getByRfc, [rfc]);
 
     if (client.length === 0) {
       res.status(404).send('Client not found');
@@ -53,9 +53,9 @@ const getClientID = async (req = request, res = response) => {
 
 // Para agregar un nuevo cliente
 const addClient = async (req = request, res = response) => {
-  const { ID, first_name, last_name, birth_date, gender, phone_number, email, address } = req.body;
+  const { rfc, first_name, last_name, birth_date, gender, phone_number, email, address } = req.body;
 
-  if (!ID || !first_name || !last_name || !birth_date || !gender || !phone_number || !email || !address) {
+  if (!rfc || !first_name || !last_name || !birth_date || !gender || !phone_number || !email || !address) {
     res.status(400).send('All fields are required');
     return;
   }
@@ -64,15 +64,16 @@ const addClient = async (req = request, res = response) => {
   try {
     conn = await pool.getConnection();
     
-    // Checar que no exista un cliente con el mismo ID o correo electronico
-    const existingClient = await conn.query(clientsQueries.getIDOrEmail, [ID, email]);
+    // Validar que no exista un cliente con el mismo RFC o email
+    const existingClient = await conn.query(clientsQueries.getByRfcOrEmail, [rfc, email]);
 
     if (existingClient.length > 0) {
-      res.status(409).send('Client with this ID or email already exists');
+      res.status(409).send('Client with this RFC or email already exists');
       return;
     }
 
-    const newClient = await conn.query(clientsQueries.create, [ID, first_name, last_name, birth_date, gender, phone_number, email, address]);
+    // Insertar el nuevo cliente
+    const newClient = await conn.query(clientsQueries.create, [rfc, first_name, last_name, birth_date, gender, phone_number, email, address]);
     
     if (newClient.affectedRows === 0) {
       res.status(500).send('Client could not be created');
@@ -90,11 +91,11 @@ const addClient = async (req = request, res = response) => {
 
 // Para actualizar un cliente
 const updateClient = async (req = request, res = response) => {
-  const { ID } = req.params; 
-  const { first_name, last_name, birth_date, gender, phone_number, email, address } = req.body; // Datos a actualizar
+  const { rfc } = req.params; 
+  const { first_name, last_name, birth_date, gender, phone_number, email, address } = req.body; 
 
-  if (!ID) {
-    res.status(400).send('ID is required');
+  if (!rfc) {
+    res.status(400).send('RFC is required');
     return;
   }
 
@@ -103,20 +104,20 @@ const updateClient = async (req = request, res = response) => {
     conn = await pool.getConnection();
 
     // Verificar si el cliente existe y está activo
-    const client = await conn.query(clientsQueries.getID, [ID]);
+    const client = await conn.query(clientsQueries.getByRfc, [rfc]);
     if (client.length === 0 || client[0].is_active === 0) {
       res.status(404).send('Client not found or inactive');
       return;
     }
 
-    //Validar que no se repita el ID o email
-    const existingClient = await conn.query(clientsQueries.getIDOrEmail, [ID, email]);
-    if (existingClient.length > 0 && existingClient[0].ID !== ID) {
-      res.status(409).send('Client with this Id or email already exists');
+    // Validar que no se repita el RFC o email
+    const existingClient = await conn.query(clientsQueries.getByRfcOrEmail, [rfc, email]);
+    if (existingClient.length > 0 && existingClient[0].rfc !== rfc) {
+      res.status(409).send('Client with this RFC or email already exists');
       return;
     }
 
-    //Actualizar los datos del cliente
+    // Actualizar los datos del cliente
     const updatedClient = await conn.query(clientsQueries.update, [
       first_name || client[0].first_name,
       last_name || client[0].last_name,
@@ -125,7 +126,7 @@ const updateClient = async (req = request, res = response) => {
       phone_number || client[0].phone_number,
       email || client[0].email,
       address || client[0].address,
-      ID
+      rfc
     ]);
 
     if (updatedClient.affectedRows === 0) {
@@ -143,10 +144,10 @@ const updateClient = async (req = request, res = response) => {
 
 // Para eliminar un cliente (marcar como inactivo)
 const deleteClient = async (req = request, res = response) => {
-  const { ID } = req.params;
+  const { rfc } = req.params;
 
-  if (!ID) {
-    res.status(400).send('ID is required');
+  if (!rfc) {
+    res.status(400).send('RFC is required');
     return;
   }
 
@@ -154,15 +155,15 @@ const deleteClient = async (req = request, res = response) => {
   try {
     conn = await pool.getConnection();
 
-    //Verificar si el cliente existe y está activo
-    const client = await conn.query(clientsQueries.getID, [ID]);
+    // Verificar si el cliente existe y está activo
+    const client = await conn.query(clientsQueries.getByRfc, [rfc]);
     if (client.length === 0 || client[0].is_active === 0) {
       res.status(404).send('Client not found or already inactive');
       return;
     }
 
-    //Marcar al cliente como inactivo
-    const deletedClient = await conn.query(clientsQueries.delete, [ID]);
+    // Marcar al cliente como inactivo
+    const deletedClient = await conn.query(clientsQueries.delete, [rfc]);
     if (deletedClient.affectedRows === 0) {
       res.status(500).send('Client could not be deleted');
       return;
@@ -176,4 +177,4 @@ const deleteClient = async (req = request, res = response) => {
   }
 };
 
-module.exports = { getAllClients, getClientID, addClient, updateClient, deleteClient };
+module.exports = { getAllClients, getClientByRfc, addClient, updateClient, deleteClient };
