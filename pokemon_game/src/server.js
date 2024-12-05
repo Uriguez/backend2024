@@ -1,4 +1,6 @@
 const express = require ('express');
+const usersRoutes = require('./routes/users');       // Rutas de usuarios
+
 
 class Server {
     constructor(){
@@ -16,7 +18,8 @@ class Server {
     }
 
     routes(){
-
+        this.app.use('/users', usersRoutes);       // Rutas de usuarios
+     
     }
 
     start(){
