@@ -51,7 +51,7 @@ const createUser = async (req = request, res = response) => {
     const newUser = await conn.query(userQueries.addUser, [first_name, last_name, email, hashedPassword]);
 
     if(newUser.affectedRows === 0) {
-        res.status(500.).send({message: 'Error adding user'});
+        res.status(500).send({message: 'Error adding user'});
         return;
     }
 
