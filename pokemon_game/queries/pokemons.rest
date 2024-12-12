@@ -4,11 +4,11 @@ GET http://localhost:3000/pokemons
 GET http://localhost:3000/pokemons/play
 
 ###
-//obtener por id
+//Obtener por id
 GET http://localhost:3000/pokemons/25
 
 ###
-//crear
+//Crear
 POST http://localhost:3000/pokemons
 Content-Type: application/json
 
@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ###
-//editar
+//Editar
 PUT http://localhost:3000/pokemons/1
 Content-Type: application/json
 
@@ -28,5 +28,5 @@ Content-Type: application/json
 }
 
 ###
-//eliminar
+//Eliminar
 DELETE http://localhost:3000/pokemons/154

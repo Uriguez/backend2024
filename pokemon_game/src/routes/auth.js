@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/login', login);
 
-router.post('/login', async (req, res) => {
+router.post('/logout', async (req, res) => {
 
 });
 

@@ -1,13 +1,15 @@
-const express = require ('express');
-const usersRoutes = require('./routes/users');       // Rutas de usuarios
-const pokemonsRoutes = require('./routes/pokemons');       // Rutas de usuarios
+const express = require('express');
+const usersRoutes= require('./routes/users');
+const pokemonsRoutes= require('./routes/pokemons');
+const authRoutes = require('./routes/auth');
 const pokemonSeeder = require('./seeders/pokemon');
 
 
-class Server {
+
+class Server{
     constructor(){
-        this.app = express();
-        this.port = 3000;
+        this.app=express();
+        this.port=3000;
 
         this.middlewares();
         this.routes();
@@ -16,25 +18,29 @@ class Server {
 
     middlewares(){
         this.app.use(express.json());
-
     }
 
     routes(){
-        this.app.use('/users', usersRoutes);       // Rutas de usuarios
-        this.app.use('/pokemons', pokemonsRoutes);       // Rutas de pokemons
+        this.app.use('/users',usersRoutes);
+        this.app.use('/pokemons',pokemonsRoutes);
+        this.app.use('/auth',authRoutes);
 
-     
+
     }
 
     seeder(){
         pokemonSeeder();
     }
+
+
+
+
     start(){
         this.app.listen(this.port, () => {
-            console.log(`Server is running on port ${this.port}`);
-            
+            console.log(`Server is running on port ${this.port}`);        
         });
-    }
+        }
+
 }
 
-module.exports = Server;
+module.exports=Server;
