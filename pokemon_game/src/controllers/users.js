@@ -3,15 +3,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../db/connection');
 const userQueries = require('../models/users');
-
 require('dotenv').config();
 
 const secret = process.env.SECRET;
-
 const SALT_ROUNDS = 10;
 
-const userProtected = async (req =request, res = response) => {
-    res.send({message: "You have access"});
+const userProtected = async (req = request, res = response) => {
+    console.log({req});
+    res.send({message: "You have access!!"});
 }
 
 const getAllUsers = async (req = request, res = response) => {
@@ -38,6 +37,18 @@ const createUser = async (req = request, res = response) => {
         email,
         password
     } = req.body;
+
+    const {id, is_admin} = req;
+
+    if(!id || !is_admin === undefined){
+        res.status(400).send({message: 'Missing required fields'});
+        return;
+    }
+
+    if (is_admin !== 1){
+      res.status(403).send({message: 'You do not have enough privileges'});
+      return;
+    }
 
     if(!first_name || !last_name || !email || !password){
         res.status(400).json({message: 'Missing required fields'});

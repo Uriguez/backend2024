@@ -37,16 +37,15 @@ const login = async (req = request,res = response) =>{
             })
             return;
         }
-        
-    const token = jwt.sign({
-        id: user.id,
-        isAdmin: user.isAdmin,
-      },  secret, {
-            expiresIn: "5m"
-        
-    });       
-        delete user.password;
 
+        const token = jwt.sign({
+         id: user.id,
+         is_Admin: user.is_Admin
+        }, secret, {
+            expiresIn: "5m"
+        });
+        delete user.password;
+        
         res.status(200).send({
             message: "Successfully logged in",
             user,
